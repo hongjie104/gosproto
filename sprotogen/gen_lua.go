@@ -48,13 +48,6 @@ local {{.PackageName}} = {
 	Names = { {{range .Structs}}
 		"{{.Name}}", {{end}}
 	},
-
-	ResetByName = { {{range .Structs}}
-		{{.Name}} = function( obj )
-			if obj == nil then return end {{range .StFields}}
-			obj.{{.Name}} = {{.LuaDefaultValueString}} {{end}}
-		end, {{end}}
-	},
 }
 
 function {{.PackageName}}.GetID(msgName)
