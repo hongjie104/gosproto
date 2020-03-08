@@ -3,6 +3,7 @@ package meta
 import (
 	"errors"
 	"fmt"
+
 	"github.com/davyxu/golexer"
 )
 

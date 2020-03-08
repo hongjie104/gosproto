@@ -68,10 +68,12 @@ end
 
 function {{.PackageName}}.Decode(msgName, msgBytes)
 	local data = {{.PackageName}}.Schema:decode(msgName, msgBytes)
-	logDebug('received msg:', msgName)
-	for k, v in pairs(data) do
-        logDebug(k, v)
-    end
+	if msgName ~= 'S2C_SystemTime' then
+		logDebug('received msg:', msgName)
+		for k, v in pairs(data) do
+			logDebug(k, v)
+		end
+	end
 	return data
 end
 
