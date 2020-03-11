@@ -53,7 +53,7 @@ local {{.PackageName}} = {
 function {{.PackageName}}.GetID(msgName)
     for i, v in ipairs({{.PackageName}}.Names) do
         if v == msgName then
-            return i - 1
+            return tostring(i - 1)
         end
     end
 end
