@@ -60,6 +60,7 @@ end
 
 function {{.PackageName}}.Encode(msgName, msgTable)
 	logDebug('send msg:', msgName)
+	msgTable = msgTable or {}
     for k, v in pairs(msgTable) do
         logDebug(k, v)
     end
