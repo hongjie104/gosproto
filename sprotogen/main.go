@@ -11,6 +11,7 @@ import (
 var paramGoOut = flag.String("go_out", "", "golang output filename")
 var paramLuaOut = flag.String("lua_out", "", "lua output filename")
 var paramEmmyLuaOut = flag.String("emmylua_out", "", "emmy lua output filename")
+var paramTSOut = flag.String("ts_out", "", "ts output filename")
 var paramCSOut = flag.String("cs_out", "", "csharp output filename")
 var paramSprotoOut = flag.String("sproto_out", "", "standard sproto output filename")
 var paramPackage = flag.String("package", "", "package name in go files")
@@ -83,6 +84,10 @@ func main() {
 
 	if *paramEmmyLuaOut != "" {
 		genFile(fileset, gen_emmylua, *paramEmmyLuaOut)
+	}
+
+	if *paramTSOut != "" {
+		genFile(fileset, gen_ts, *paramTSOut)
 	}
 
 	if *paramCSOut != "" {
