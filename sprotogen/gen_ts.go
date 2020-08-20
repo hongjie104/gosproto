@@ -39,11 +39,26 @@ namespace socket {
                 const msgName = _getMsgName(msgId);
                 const data = _sp.decode(msgName, dataByteArray);
                 event.dispatchEvent(new socket.MessageEvent(msgName, data));
+                if (DEBUG) {
+					if ('S2C_SystemTime' !== msgName) {
+						console.log(&========received msg = ${msgName}==========&);
+						for (const key in data) {
+							console.log(&key = ${key}, val =&);
+							console.log(data[key]);
+						}
+					}
+				}
             });
         }
     }
 
     export function send(msg: string, params: any = {}) {
+        if (DEBUG) {
+			console.log(&========send msg = ${msg}==========&);
+			for (const key in params) {
+				console.log(&key = ${key}, val = ${params[key]}&);
+			}
+		}
         const buffer = _sp.encode(msg, params);
         const byteArray = new egret.ByteArray();
         byteArray.endian = egret.Endian.LITTLE_ENDIAN;
