@@ -56,7 +56,8 @@ namespace socket {
         if (DEBUG) {
 			console.log(&========send msg = ${msg}==========&);
 			for (const key in params) {
-				console.log(&key = ${key}, val = ${params[key]}&);
+                console.log(&key = ${key}, val =&);
+				console.log(params[key]);
 			}
 		}
         const buffer = _sp.encode(msg, params);
