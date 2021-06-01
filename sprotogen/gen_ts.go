@@ -26,6 +26,8 @@ namespace socket {
 
     export const event = new egret.EventDispatcher();
 
+    export const md5 = "{{.MD5}}";
+
     export function init() {
         if (!_socket) {
             _socket = new Socket(() => {
@@ -114,9 +116,6 @@ func (self *fieldModel) TSTypeName() string {
 }
 
 func gen_ts(fm *fileModel, filename string) {
-
 	addData(fm, "ts")
-
 	generateCode("sp->ts", strings.ReplaceAll(tsCodeTemplate, "&", "`"), filename, fm, nil)
-
 }

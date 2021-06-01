@@ -67,6 +67,8 @@ func ResultToString(result int32) string {
 }
 {{end}}
 
+const md5 = "{{.MD5}}"
+
 // Processor Processor
 var Processor = sproto.NewProcessor()
 
@@ -230,11 +232,8 @@ func (self *fieldModel) GoTags() string {
 }
 
 func gen_go(fm *fileModel, filename string) {
-
 	addData(fm, "go")
-
 	generateCode("sp->go", goCodeTemplate, filename, fm, &generateOption{
 		formatGoCode: true,
 	})
-
 }

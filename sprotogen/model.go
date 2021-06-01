@@ -1,6 +1,9 @@
 package main
 
 import (
+	"crypto/md5"
+	"fmt"
+	"io/ioutil"
 	"strings"
 
 	"github.com/davyxu/gosproto/meta"
@@ -24,7 +27,6 @@ type structModel struct {
 
 	f *fileModel
 }
-
 
 func (self *structModel) IsResultEnum() bool {
 	return self.IsEnum() && strings.HasSuffix(self.Name, "Result")
@@ -69,6 +71,8 @@ type fileModel struct {
 	CSFieldAttr string
 
 	EnumValueGroup bool
+
+	MD5 string
 }
 
 func (self *fileModel) Len() int {
@@ -88,52 +92,50 @@ func (self *fileModel) Less(i, j int) bool {
 }
 
 func addStruct(fm *fileModel, fileD *meta.FileDescriptor, srcName string) {
-
 	for _, st := range fileD.Objects {
-
 		// 过滤, 只输出某个来源
 		if srcName != "" && st.SrcName != srcName {
 			continue
 		}
-
 		stModel := &structModel{
 			Descriptor: st,
 		}
-
 		for index, fd := range st.Fields {
-
 			fdModel := fieldModel{
 				FieldDescriptor: fd,
 				FieldIndex:      index,
 				st:              stModel,
 			}
-
 			stModel.StFields = append(stModel.StFields, fdModel)
-
 		}
-
 		stModel.f = fm
-
 		fm.Objects = append(fm.Objects, stModel)
-
 		switch stModel.Type {
 		case meta.DescriptorType_Enum:
 			fm.Enums = append(fm.Enums, stModel)
 		case meta.DescriptorType_Struct:
 			fm.Structs = append(fm.Structs, stModel)
 		}
-
 	}
 }
 
 func addData(fm *fileModel, matchTag string) {
-
+	md5Str := ""
 	for _, file := range fm.FileDescriptorSet.Files {
-
+		data, _ := ioutil.ReadFile(file.FileName)
+		md5Str = fmt.Sprintf("%s%x", md5Str, md5.Sum(data))
 		if file.MatchTag(matchTag) {
 			addStruct(fm, file, "")
 		}
-
 	}
+	fm.MD5 = fmt.Sprintf("%x", md5.Sum([]byte(md5Str)))
+}
 
+func md5SumFile(file string) (value string, err error) {
+	data, err := ioutil.ReadFile(file)
+	if err != nil {
+		return
+	}
+	value = fmt.Sprintf("%x", md5.Sum(data))
+	return
 }

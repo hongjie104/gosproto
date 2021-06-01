@@ -4,10 +4,10 @@
 package example
 
 import (
-	"reflect"
-	"github.com/davyxu/gosproto"
-	"github.com/davyxu/cellnet/codec/sproto"
 	"fmt"
+	"github.com/davyxu/cellnet/codec/sproto"
+	"github.com/davyxu/gosproto"
+	"reflect"
 )
 
 type MyCar int32

@@ -62,9 +62,7 @@ func genFile(fileset *meta.FileDescriptorSet, generator func(*fileModel, string)
 }
 
 func main() {
-
 	flag.Parse()
-
 	// 版本
 	if *paramVersion {
 		fmt.Println(Version)
@@ -74,7 +72,6 @@ func main() {
 	fileset := mergeSchema(flag.Args())
 
 	if *paramGoOut != "" {
-
 		genFile(fileset, gen_go, *paramGoOut)
 	}
 
@@ -97,5 +94,4 @@ func main() {
 	if *paramSprotoOut != "" {
 		genFile(fileset, gen_sproto, *paramSprotoOut)
 	}
-
 }

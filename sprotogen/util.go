@@ -25,39 +25,28 @@ func publicFieldName(name string) string {
 }
 
 func generateCode(templateName, templateStr, output string, model interface{}, opt *generateOption) {
-
 	var err error
-
 	if opt == nil {
 		opt = &generateOption{}
 	}
-
 	var bf bytes.Buffer
-
 	tpl, err := template.New(templateName).Parse(templateStr)
 	if err != nil {
 		goto OnError
 	}
-
 	err = tpl.Execute(&bf, model)
 	if err != nil {
 		goto OnError
 	}
-
 	if opt.formatGoCode {
 		if err = formatCode(&bf); err != nil {
 			fmt.Println("format golang code err", err)
 		}
 	}
-
 	opt.outputData = bf.Bytes()
-
 	if output != "" {
-
 		os.MkdirAll(filepath.Dir(output), 666)
-
 		err = ioutil.WriteFile(output, bf.Bytes(), 0666)
-
 		if err != nil {
 			goto OnError
 		}

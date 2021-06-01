@@ -37,6 +37,7 @@ Enum = {
 }
 
 local {{.PackageName}} = {
+	md5 = "{{.MD5}}",
 	Schema = sproto.parse [[
 {{range .Structs}}
 .{{.Name}} {	{{range .StFields}}	
@@ -111,9 +112,6 @@ func (self *fieldModel) LuaDefaultValueString() string {
 }
 
 func gen_lua(fm *fileModel, filename string) {
-
 	addData(fm, "lua")
-
 	generateCode("sp->lua", luaCodeTemplate, filename, fm, nil)
-
 }
