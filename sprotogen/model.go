@@ -4,6 +4,8 @@ import (
 	"crypto/md5"
 	"fmt"
 	"io/ioutil"
+	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/davyxu/gosproto/meta"
@@ -120,15 +122,20 @@ func addStruct(fm *fileModel, fileD *meta.FileDescriptor, srcName string) {
 }
 
 func addData(fm *fileModel, matchTag string) {
-	md5Str := ""
+	var md5StrList []string
 	for _, file := range fm.FileDescriptorSet.Files {
 		data, _ := ioutil.ReadFile(file.FileName)
-		md5Str = fmt.Sprintf("%s%x", md5Str, md5.Sum(data))
+		md5StrList = append(md5StrList, fmt.Sprintf("%x", md5.Sum(data)))
 		if file.MatchTag(matchTag) {
 			addStruct(fm, file, "")
 		}
 	}
-	fm.MD5 = fmt.Sprintf("%x", md5.Sum([]byte(md5Str)))
+	sort.Slice(md5StrList, func(i, j int) bool {
+		numA, _ := strconv.Atoi(md5StrList[i])
+		numB, _ := strconv.Atoi(md5StrList[j])
+		return numA < numB
+	})
+	fm.MD5 = fmt.Sprintf("%x", md5.Sum([]byte(strings.Join(md5StrList, ""))))
 }
 
 func md5SumFile(file string) (value string, err error) {
