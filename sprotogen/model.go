@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"sort"
-	"strconv"
 	"strings"
 
 	"github.com/davyxu/gosproto/meta"
@@ -131,9 +130,7 @@ func addData(fm *fileModel, matchTag string) {
 		}
 	}
 	sort.Slice(md5StrList, func(i, j int) bool {
-		numA, _ := strconv.Atoi(md5StrList[i])
-		numB, _ := strconv.Atoi(md5StrList[j])
-		return numA < numB
+		return md5StrList[i] < md5StrList[j]
 	})
 	fm.MD5 = fmt.Sprintf("%x", md5.Sum([]byte(strings.Join(md5StrList, ""))))
 }
