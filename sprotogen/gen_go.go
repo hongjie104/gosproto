@@ -67,6 +67,7 @@ func ResultToString(result int32) string {
 }
 {{end}}
 
+// MD5 MD5
 const MD5 = "{{.MD5}}"
 
 // Processor Processor
