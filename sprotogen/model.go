@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/md5"
 	"crypto/sha256"
 	"fmt"
 	"io"
@@ -140,7 +139,8 @@ func addData(fm *fileModel, matchTag string) {
 	sort.Slice(md5StrList, func(i, j int) bool {
 		return md5StrList[i] < md5StrList[j]
 	})
-	fm.MD5 = fmt.Sprintf("%x", md5.Sum([]byte(strings.Join(md5StrList, ""))))
+	// fm.MD5 = fmt.Sprintf("%x", md5.Sum([]byte(strings.Join(md5StrList, ""))))
+	fm.MD5 = strings.Join(md5StrList, "&")
 }
 
 func hashFile(filePath string) string {
