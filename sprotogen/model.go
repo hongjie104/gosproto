@@ -126,8 +126,8 @@ func addData(fm *fileModel, matchTag string) {
 	var md5StrList []string
 	for _, file := range fm.FileDescriptorSet.Files {
 		fi, _ := os.Open(file.FileName)
-		// decoder := mahonia.NewDecoder("gbk")
-		decoder := mahonia.NewDecoder("utf-8")
+		decoder := mahonia.NewDecoder("gbk")
+		// decoder := mahonia.NewDecoder("utf-8")
 		// data, _ := ioutil.ReadFile(file.FileName)
 		data, _ := ioutil.ReadAll(decoder.NewReader(fi))
 		fi.Close()
