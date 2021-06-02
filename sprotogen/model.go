@@ -8,6 +8,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/axgle/mahonia"
 	"github.com/davyxu/gosproto/meta"
 )
 
@@ -145,8 +146,10 @@ func addData(fm *fileModel, matchTag string) {
 
 func hashFile(filePath string) string {
 	file, _ := os.Open(filePath)
+	decoder := mahonia.NewDecoder("utf-8")
+	// decoder := mahonia.NewDecoder("gb2312")
 	defer file.Close()
 	hash := sha256.New()
-	io.Copy(hash, file)
+	io.Copy(hash, decoder.NewReader(file))
 	return fmt.Sprintf("%x", hash.Sum(nil))
 }
