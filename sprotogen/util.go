@@ -45,7 +45,7 @@ func generateCode(templateName, templateStr, output string, model interface{}, o
 	}
 	opt.outputData = bf.Bytes()
 	if output != "" {
-		os.MkdirAll(filepath.Dir(output), 666)
+		os.MkdirAll(filepath.Dir(output), 0666)
 		err = ioutil.WriteFile(output, bf.Bytes(), 0666)
 		if err != nil {
 			goto OnError
@@ -59,20 +59,15 @@ OnError:
 }
 
 func formatCode(bf *bytes.Buffer) error {
-
 	fset := token.NewFileSet()
-
 	ast, err := parser.ParseFile(fset, "", bf, parser.ParseComments)
 	if err != nil {
 		return err
 	}
-
 	bf.Reset()
-
 	err = (&printer.Config{Mode: printer.TabIndent | printer.UseSpaces, Tabwidth: 8}).Fprint(bf, fset, ast)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }

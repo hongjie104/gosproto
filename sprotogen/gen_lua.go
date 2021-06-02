@@ -83,13 +83,13 @@ return {{.PackageName}}
 
 `
 
-func (self *fieldModel) LuaDefaultValueString() string {
+func (fm *fieldModel) LuaDefaultValueString() string {
 
-	if self.Repeatd {
+	if fm.Repeatd {
 		return "nil"
 	}
 
-	switch self.Type {
+	switch fm.Type {
 	case meta.FieldType_Bool:
 		return "false"
 	case meta.FieldType_Int32,
@@ -108,7 +108,7 @@ func (self *fieldModel) LuaDefaultValueString() string {
 		return "nil"
 	}
 
-	return "unknown type" + self.Type.String()
+	return "unknown type" + fm.Type.String()
 }
 
 func gen_lua(fm *fileModel, filename string) {

@@ -81,17 +81,17 @@ func init() {
 
 `
 
-func (self *fieldModel) GoEnumTypeName() string {
+func (fm *fieldModel) GoEnumTypeName() string {
 
-	if self.st.EnumValueIgnoreType {
+	if fm.st.EnumValueIgnoreType {
 		return ""
 	}
 
-	return self.st.Name
+	return fm.st.Name
 }
 
-func (self *fieldModel) GoExtendFieldGetterName() string {
-	pname := publicFieldName(self.Name)
+func (fm *fieldModel) GoExtendFieldGetterName() string {
+	pname := publicFieldName(fm.Name)
 
 	if token.Lookup(pname).IsKeyword() {
 		return pname + "_"
@@ -100,57 +100,49 @@ func (self *fieldModel) GoExtendFieldGetterName() string {
 	return pname
 }
 
-func (self *fieldModel) GoExtendFieldGetter() string {
-
-	switch self.Type {
+func (fm *fieldModel) GoExtendFieldGetter() string {
+	switch fm.Type {
 	case meta.FieldType_Float32,
 		meta.FieldType_Float64:
-		return fmt.Sprintf("return %s(self.%s) * %f", self.GoExtendFieldGetterType(), self.GoFieldName(), 1.0/float32(self.ExtendTypePrecision()))
+		return fmt.Sprintf("return %s(self.%s) * %f", fm.GoExtendFieldGetterType(), fm.GoFieldName(), 1.0/float32(fm.ExtendTypePrecision()))
 	}
-
-	return "unknown extend type:" + self.Type.String()
+	return "unknown extend type:" + fm.Type.String()
 }
 
-func (self *fieldModel) GoExtendFieldSetter() string {
-
-	switch self.Type {
+func (fm *fieldModel) GoExtendFieldSetter() string {
+	switch fm.Type {
 	case meta.FieldType_Float32:
-		return fmt.Sprintf("self.%s = int32(v* %d)", self.GoFieldName(), self.ExtendTypePrecision())
+		return fmt.Sprintf("self.%s = int32(v* %d)", fm.GoFieldName(), fm.ExtendTypePrecision())
 	case meta.FieldType_Float64:
-		return fmt.Sprintf("self.%s = int64(v* %d)", self.GoFieldName(), self.ExtendTypePrecision())
+		return fmt.Sprintf("self.%s = int64(v* %d)", fm.GoFieldName(), fm.ExtendTypePrecision())
 	}
-
-	return "unknown extend type:" + self.Type.String()
+	return "unknown extend type:" + fm.Type.String()
 }
 
-func (self *fieldModel) GoExtendFieldGetterType() string {
+func (fm *fieldModel) GoExtendFieldGetterType() string {
 	var b bytes.Buffer
-	if self.Repeatd {
+	if fm.Repeatd {
 		b.WriteString("[]")
 	}
-
 	// 字段类型映射go的类型
-	switch self.Type {
+	switch fm.Type {
 	case meta.FieldType_Float32:
 		b.WriteString("float32")
 	case meta.FieldType_Float64:
 		b.WriteString("float64")
 	default:
-		b.WriteString("unknown extend type:" + self.Type.String())
+		b.WriteString("unknown extend type:" + fm.Type.String())
 	}
-
 	return b.String()
 }
 
-func (self *fieldModel) GoFieldName() string {
-
+func (fm *fieldModel) GoFieldName() string {
 	var pname string
-
 	// 扩展类型不能直接访问
-	if self.IsExtendType() {
-		pname = "Extend_" + self.Name
+	if fm.IsExtendType() {
+		pname = "Extend_" + fm.Name
 	} else {
-		pname = publicFieldName(self.Name)
+		pname = publicFieldName(fm.Name)
 	}
 
 	// 碰到关键字在尾部加_
@@ -161,26 +153,26 @@ func (self *fieldModel) GoFieldName() string {
 	return pname
 }
 
-func (self *fieldModel) GoTypeName() string {
+func (fm *fieldModel) GoTypeName() string {
 
 	var b bytes.Buffer
-	if self.Repeatd {
+	if fm.Repeatd {
 		b.WriteString("[]")
 	}
 
-	if self.Type == meta.FieldType_Struct {
+	if fm.Type == meta.FieldType_Struct {
 		b.WriteString("*")
 	}
 
 	// 字段类型映射go的类型
-	switch self.Type {
+	switch fm.Type {
 	case meta.FieldType_Integer:
 		b.WriteString("int")
 	case meta.FieldType_Bool:
 		b.WriteString("bool")
 	case meta.FieldType_Struct,
 		meta.FieldType_Enum:
-		b.WriteString(self.Complex.Name)
+		b.WriteString(fm.Complex.Name)
 	case meta.FieldType_Float32:
 		b.WriteString("int32")
 	case meta.FieldType_Float64:
@@ -188,20 +180,20 @@ func (self *fieldModel) GoTypeName() string {
 	case meta.FieldType_Bytes:
 		b.WriteString("[]byte")
 	default:
-		b.WriteString(self.Type.String())
+		b.WriteString(fm.Type.String())
 	}
 
 	return b.String()
 }
 
-func (self *fieldModel) GoTags() string {
+func (fm *fieldModel) GoTags() string {
 
 	var b bytes.Buffer
 
 	b.WriteString("`sproto:\"")
 
 	// 整形类型对解码层都视为整形
-	switch self.Type {
+	switch fm.Type {
 	case meta.FieldType_Int32,
 		meta.FieldType_Int64,
 		meta.FieldType_UInt32,
@@ -213,19 +205,19 @@ func (self *fieldModel) GoTags() string {
 	case meta.FieldType_Bytes:
 		b.WriteString("string")
 	default:
-		b.WriteString(self.Kind())
+		b.WriteString(fm.Kind())
 	}
 
 	b.WriteString(",")
 
-	b.WriteString(fmt.Sprintf("%d", self.TagNumber()))
+	b.WriteString(fmt.Sprintf("%d", fm.TagNumber()))
 	b.WriteString(",")
 
-	if self.Repeatd {
+	if fm.Repeatd {
 		b.WriteString("array,")
 	}
 
-	b.WriteString(fmt.Sprintf("name=%s", self.GoFieldName()))
+	b.WriteString(fmt.Sprintf("name=%s", fm.GoFieldName()))
 
 	b.WriteString("\"`")
 

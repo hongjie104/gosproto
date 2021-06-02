@@ -10,19 +10,19 @@ import (
 	"github.com/davyxu/gosproto/meta"
 )
 
-const spCodeTemplate = `
-{{range $a, $obj := .Objects}}
-{{.SpLeadingComment}}
-{{.TypeName}} {{.Name}} {
-	{{range .StFields}}{{.SpLeadingComment}}{{if $obj.IsStruct}}
-	{{.SpFieldString}}	
-	{{else}}
-	{{.Name}} = {{.TagNumber}}{{.SpTrailingComment}}
-	{{end}}	{{end}}
-}
-{{end}}
+// const spCodeTemplate = `
+// {{range $a, $obj := .Objects}}
+// {{.SpLeadingComment}}
+// {{.TypeName}} {{.Name}} {
+// 	{{range .StFields}}{{.SpLeadingComment}}{{if $obj.IsStruct}}
+// 	{{.SpFieldString}}
+// 	{{else}}
+// 	{{.Name}} = {{.TagNumber}}{{.SpTrailingComment}}
+// 	{{end}}	{{end}}
+// }
+// {{end}}
 
-`
+// `
 
 func addCommentSignAtEachLine(sign, comment string) string {
 
@@ -49,39 +49,39 @@ func addCommentSignAtEachLine(sign, comment string) string {
 	return out.String()
 }
 
-func (self *fieldModel) SpFieldString() string {
-	if self.st.f.forceAutoTag {
-		return fmt.Sprintf("%s %s%s", self.Name, self.TypeString(), self.SpTrailingComment())
+func (fm *fieldModel) SpFieldString() string {
+	if fm.st.f.forceAutoTag {
+		return fmt.Sprintf("%s %s%s", fm.Name, fm.TypeString(), fm.SpTrailingComment())
 	} else {
-		return fmt.Sprintf("%s %s %s%s", self.Name, self.TagString(), self.TypeString(), self.SpTrailingComment())
+		return fmt.Sprintf("%s %s %s%s", fm.Name, fm.TagString(), fm.TypeString(), fm.SpTrailingComment())
 	}
 }
 
-func (self *fieldModel) SpTrailingComment() string {
+func (fm *fieldModel) SpTrailingComment() string {
 
-	return addCommentSignAtEachLine("//", self.Trailing)
+	return addCommentSignAtEachLine("//", fm.Trailing)
 }
 
-func (self *fieldModel) TagString() string {
-	if self.AutoTag == -1 {
-		return strconv.Itoa(self.Tag)
+func (fm *fieldModel) TagString() string {
+	if fm.AutoTag == -1 {
+		return strconv.Itoa(fm.Tag)
 	}
 
 	return ""
 }
 
-func (self *fieldModel) SpLeadingComment() string {
+func (fm *fieldModel) SpLeadingComment() string {
 
-	return addCommentSignAtEachLine("//", self.Leading)
+	return addCommentSignAtEachLine("//", fm.Leading)
 }
 
-func (self *structModel) SpLeadingComment() string {
+func (fm *structModel) SpLeadingComment() string {
 
-	return addCommentSignAtEachLine("//", self.Leading)
+	return addCommentSignAtEachLine("//", fm.Leading)
 }
 
-func (self *structModel) TypeName() string {
-	switch self.Type {
+func (fm *structModel) TypeName() string {
+	switch fm.Type {
 	case meta.DescriptorType_Enum:
 		return "enum"
 	case meta.DescriptorType_Struct:
@@ -91,17 +91,16 @@ func (self *structModel) TypeName() string {
 	return "none"
 }
 
-func gen_sp(fileset *meta.FileDescriptorSet, forceAutoTag bool) {
+// func gen_sp(fileset *meta.FileDescriptorSet, forceAutoTag bool) {
+// 	//for srcName := range fileD.ObjectsBySrcName {
+// 	//	fm := &fileModel{
+// 	//		FileDescriptorSet: fileset,
+// 	//		forceAutoTag:      forceAutoTag,
+// 	//	}
+// 	//
+// 	//	addStruct(fm, fileD, srcName)
+// 	//
+// 	//	generateCode("sp->sp", spCodeTemplate, srcName, fm, nil)
+// 	//}
 
-	//for srcName := range fileD.ObjectsBySrcName {
-	//	fm := &fileModel{
-	//		FileDescriptorSet: fileset,
-	//		forceAutoTag:      forceAutoTag,
-	//	}
-	//
-	//	addStruct(fm, fileD, srcName)
-	//
-	//	generateCode("sp->sp", spCodeTemplate, srcName, fm, nil)
-	//}
-
-}
+// }

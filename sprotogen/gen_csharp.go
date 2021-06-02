@@ -105,70 +105,63 @@ namespace {{.PackageName}}
 }
 `
 
-func (self *fieldModel) CSTemplate() string {
-
+func (fm *fieldModel) CSTemplate() string {
 	var buf bytes.Buffer
-
 	var needTemplate bool
-
-	switch self.Type {
+	switch fm.Type {
 	case meta.FieldType_Struct,
 		meta.FieldType_Enum:
 		needTemplate = true
 	}
-
 	if needTemplate {
 		buf.WriteString("<")
 	}
-
-	if self.MainIndex != nil {
-		buf.WriteString(csharpTypeName(self.MainIndex))
+	if fm.MainIndex != nil {
+		buf.WriteString(csharpTypeName(fm.MainIndex))
 		buf.WriteString(",")
 	}
-
 	if needTemplate {
-		buf.WriteString(self.Complex.Name)
+		buf.WriteString(fm.Complex.Name)
 		buf.WriteString(">")
 	}
-
 	return buf.String()
 }
 
-func (self *fieldModel) CSLamdaFunc() string {
-	if self.MainIndex == nil {
+func (fm *fieldModel) CSLamdaFunc() string {
+	if fm.MainIndex == nil {
 		return ""
 	}
 
-	return fmt.Sprintf("v => v.%s", self.MainIndex.Name)
+	return fmt.Sprintf("v => v.%s", fm.MainIndex.Name)
 }
 
-func (self *fieldModel) CSWriteFunc() string {
+func (fm *fieldModel) CSWriteFunc() string {
 
-	return "write_" + self.serializer()
+	return "write_" + fm.serializer()
 }
 
-func (self *fieldModel) CSReadFunc() string {
+func (fm *fieldModel) CSReadFunc() string {
 
 	funcName := "read_"
 
-	if self.Repeatd {
+	if fm.Repeatd {
 
-		if self.MainIndex != nil {
+		if fm.MainIndex != nil {
 			return funcName + "map"
 		} else {
-			return funcName + self.serializer() + "_list"
+			return funcName + fm.serializer() + "_list"
 		}
 
 	}
 
-	return funcName + self.serializer()
+	return funcName + fm.serializer()
 }
 
-func (self *fieldModel) serializer() string {
+func (fm *fieldModel) serializer() string {
 
 	var baseName string
 
-	switch self.Type {
+	switch fm.Type {
 	case meta.FieldType_Integer:
 		baseName = "integer"
 	case meta.FieldType_Int32:
@@ -200,9 +193,9 @@ func (self *fieldModel) serializer() string {
 	return baseName
 }
 
-func (self *fieldModel) CSTypeName() string {
+func (fm *fieldModel) CSTypeName() string {
 	// 字段类型映射go的类型
-	return csharpTypeName(self.FieldDescriptor)
+	return csharpTypeName(fm.FieldDescriptor)
 }
 
 func csharpTypeName(fd *meta.FieldDescriptor) string {
@@ -234,15 +227,15 @@ func csharpTypeName(fd *meta.FieldDescriptor) string {
 	return "unknown"
 }
 
-func (self *fieldModel) CSTypeString() string {
+func (fm *fieldModel) CSTypeString() string {
 
 	var b bytes.Buffer
-	if self.Repeatd {
+	if fm.Repeatd {
 
-		if self.MainIndex != nil {
+		if fm.MainIndex != nil {
 			b.WriteString("Dictionary<")
 
-			b.WriteString(csharpTypeName(self.MainIndex))
+			b.WriteString(csharpTypeName(fm.MainIndex))
 
 			b.WriteString(",")
 
@@ -252,21 +245,21 @@ func (self *fieldModel) CSTypeString() string {
 
 	}
 
-	b.WriteString(self.CSTypeName())
+	b.WriteString(fm.CSTypeName())
 
-	if self.Repeatd {
+	if fm.Repeatd {
 		b.WriteString(">")
 	}
 
 	return b.String()
 }
 
-func (self *fieldModel) CSFieldAttr() string {
-	return self.st.f.CSFieldAttr
+func (fm *fieldModel) CSFieldAttr() string {
+	return fm.st.f.CSFieldAttr
 }
 
-func (self *structModel) CSClassAttr() string {
-	return self.f.CSClassAttr
+func (fm *structModel) CSClassAttr() string {
+	return fm.f.CSClassAttr
 }
 
 func gen_csharp(fm *fileModel, filename string) {

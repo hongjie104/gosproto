@@ -14,43 +14,40 @@ import (
 type fieldModel struct {
 	*meta.FieldDescriptor
 	FieldIndex int
-
-	st *structModel
+	st         *structModel
 }
 
-func (self *fieldModel) UpperName() string {
-	return strings.ToUpper(string(self.Name[0])) + self.Name[1:]
+func (fm *fieldModel) UpperName() string {
+	return strings.ToUpper(string(fm.Name[0])) + fm.Name[1:]
 }
 
 type structModel struct {
 	*meta.Descriptor
-
 	StFields []fieldModel
-
-	f *fileModel
+	f        *fileModel
 }
 
-func (self *structModel) IsResultEnum() bool {
-	return self.IsEnum() && strings.HasSuffix(self.Name, "Result")
+func (fm *structModel) IsResultEnum() bool {
+	return fm.IsEnum() && strings.HasSuffix(fm.Name, "Result")
 }
 
-func (self *structModel) IsEnum() bool {
-	return self.Type == meta.DescriptorType_Enum
+func (fm *structModel) IsEnum() bool {
+	return fm.Type == meta.DescriptorType_Enum
 }
 
-func (self *structModel) IsStruct() bool {
-	return self.Type == meta.DescriptorType_Struct
+func (fm *structModel) IsStruct() bool {
+	return fm.Type == meta.DescriptorType_Struct
 }
 
-func (self *structModel) MsgID() uint32 {
-	return StringHash(self.MsgFullName())
+func (fm *structModel) MsgID() uint32 {
+	return StringHash(fm.MsgFullName())
 }
 
-func (self *structModel) MsgFullName() string {
-	return self.f.PackageName + "." + self.Name
+func (fm *structModel) MsgFullName() string {
+	return fm.f.PackageName + "." + fm.Name
 }
-func (self *structModel) FieldCount() int {
-	return len(self.StFields)
+func (fm *structModel) FieldCount() int {
+	return len(fm.StFields)
 }
 
 type fileModel struct {
@@ -77,18 +74,18 @@ type fileModel struct {
 	MD5 string
 }
 
-func (self *fileModel) Len() int {
-	return len(self.Structs)
+func (fm *fileModel) Len() int {
+	return len(fm.Structs)
 }
 
-func (self *fileModel) Swap(i, j int) {
-	self.Structs[i], self.Structs[j] = self.Structs[j], self.Structs[i]
+func (fm *fileModel) Swap(i, j int) {
+	fm.Structs[i], fm.Structs[j] = fm.Structs[j], fm.Structs[i]
 }
 
-func (self *fileModel) Less(i, j int) bool {
+func (fm *fileModel) Less(i, j int) bool {
 
-	a := self.Structs[i]
-	b := self.Structs[j]
+	a := fm.Structs[i]
+	b := fm.Structs[j]
 
 	return a.Name < b.Name
 }
@@ -136,63 +133,7 @@ func addData(fm *fileModel, matchTag string) {
 }
 
 func hashFile(filePath string) string {
-	// file, _ := os.Open(filePath)
-	// decoder := mahonia.NewDecoder("utf-8")
-	// // decoder := mahonia.NewDecoder("gb2312")
-	// defer file.Close()
-	// hash := sha256.New()
-	// io.Copy(hash, decoder.NewReader(file))
-	// return fmt.Sprintf("%x", hash.Sum(nil))
-
-	// fi, _ := os.Open(filePath)
-	// decoder := mahonia.NewDecoder("gbk")
-	// decoder := mahonia.NewDecoder("utf-8")
-	// data, _ := ioutil.ReadFile(filePath)
-	// // data, _ := ioutil.ReadAll(decoder.NewReader(fi))
-	// // fi.Close()
-	// s := strings.ReplaceAll(strings.ReplaceAll(string(data), "\n", ""), "\\0", "")
-	// return fmt.Sprintf("%x", md5.Sum([]byte(s)))
-
-	// file, _ := os.Open(filePath)
-	// defer file.Close()
-	// hash := md5.New()
-	// io.Copy(hash, file)
-	// return hex.EncodeToString(hash.Sum(nil))
-
-	// 	s := `// 玩家成就
-	// message RoleAchievement {
-	// 	id string
-	// 	type string
-	// 	// 成就的值，比如是理发次数要达到100次的成就，value就是当前理发的次数
-	// 	value int32
-	// 	// 上一次领取过的奖励id，如果没有领取过奖励，那么该值为空
-	// 	receivedAwardID string
-	// }
-
-	// // 获取成就数据
-	// message C2S_GetAchievement {}
-
-	// message S2C_GetAchievement {
-	// 	list []RoleAchievement
-	// }
-
-	// // 领取成就的奖励
-	// message C2S_ReceiveAchievementAward {
-	// 	id string
-	// }
-
-	// message S2C_UpdateAchievement {
-	// 	data RoleAchievement
-	// }`
-
-	// return fmt.Sprintf("%x", md5.Sum([]byte(s)))
-
-	// fi, _ := os.Open(filePath)
-	// decoder := mahonia.NewDecoder("gbk")
-	// decoder := mahonia.NewDecoder("utf-8")
 	data, _ := ioutil.ReadFile(filePath)
-	// data, _ := ioutil.ReadAll(decoder.NewReader(fi))
-	// fi.Close()
 	s := string(data)
 	reg := regexp.MustCompile(`[a-zA-Z]`)
 	result := reg.FindAllStringSubmatch(s, -1)
@@ -200,7 +141,5 @@ func hashFile(filePath string) string {
 	for _, strList := range result {
 		s += strings.Join(strList, "")
 	}
-	// s := strings.ReplaceAll(strings.ReplaceAll(string(data), "\n", ""), "\\0", "")
-	// s = strings.ReplaceAll(s, " ", "")
 	return fmt.Sprintf("%x", md5.Sum([]byte(s)))
 }

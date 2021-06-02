@@ -90,10 +90,10 @@ namespace socket {
 }
 `
 
-func (self *fieldModel) TSTypeName() string {
+func (fm *fieldModel) TSTypeName() string {
 	var b bytes.Buffer
 	// 字段类型映射go的类型
-	switch self.Type {
+	switch fm.Type {
 	case meta.FieldType_Bool:
 		b.WriteString("boolean")
 	case meta.FieldType_Int64,
@@ -104,11 +104,11 @@ func (self *fieldModel) TSTypeName() string {
 		b.WriteString("number")
 	case meta.FieldType_Struct,
 		meta.FieldType_Enum:
-		b.WriteString(self.Complex.Name)
+		b.WriteString(fm.Complex.Name)
 	default:
-		b.WriteString(self.Type.String())
+		b.WriteString(fm.Type.String())
 	}
-	if self.Repeatd {
+	if fm.Repeatd {
 		b.WriteString("[]")
 	}
 
