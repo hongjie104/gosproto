@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"fmt"
 	"io/ioutil"
+	"regexp"
 	"sort"
 	"strings"
 
@@ -132,7 +133,6 @@ func addData(fm *fileModel, matchTag string) {
 		return md5StrList[i] < md5StrList[j]
 	})
 	fm.MD5 = fmt.Sprintf("%x", md5.Sum([]byte(strings.Join(md5StrList, ""))))
-	// fm.MD5 = strings.Join(md5StrList, "&")
 }
 
 func hashFile(filePath string) string {
@@ -193,8 +193,14 @@ func hashFile(filePath string) string {
 	data, _ := ioutil.ReadFile(filePath)
 	// data, _ := ioutil.ReadAll(decoder.NewReader(fi))
 	// fi.Close()
-	s := strings.ReplaceAll(strings.ReplaceAll(string(data), "\n", ""), "\\0", "")
-	s = strings.ReplaceAll(s, " ", "")
-	// return fmt.Sprintf("%x", md5.Sum([]byte(s)))
-	return s
+	s := string(data)
+	reg := regexp.MustCompile(`[a-zA-Z]`)
+	result := reg.FindAllStringSubmatch(s, -1)
+	s = ""
+	for _, strList := range result {
+		s += strings.Join(strList, "")
+	}
+	// s := strings.ReplaceAll(strings.ReplaceAll(string(data), "\n", ""), "\\0", "")
+	// s = strings.ReplaceAll(s, " ", "")
+	return fmt.Sprintf("%x", md5.Sum([]byte(s)))
 }
