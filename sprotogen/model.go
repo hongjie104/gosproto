@@ -1,14 +1,13 @@
 package main
 
 import (
-	"crypto/sha256"
-	"fmt"
+	"crypto/md5"
+	"encoding/hex"
 	"io"
 	"os"
 	"sort"
 	"strings"
 
-	"github.com/axgle/mahonia"
 	"github.com/davyxu/gosproto/meta"
 )
 
@@ -125,13 +124,6 @@ func addStruct(fm *fileModel, fileD *meta.FileDescriptor, srcName string) {
 func addData(fm *fileModel, matchTag string) {
 	var md5StrList []string
 	for _, file := range fm.FileDescriptorSet.Files {
-		// fi, _ := os.Open(file.FileName)
-		// decoder := mahonia.NewDecoder("gbk")
-		// decoder := mahonia.NewDecoder("utf-8")
-		// data, _ := ioutil.ReadFile(file.FileName)
-		// data, _ := ioutil.ReadAll(decoder.NewReader(fi))
-		// fi.Close()
-		// md5StrList = append(md5StrList, fmt.Sprintf("%x", md5.Sum(data)))
 		md5StrList = append(md5StrList, hashFile(file.FileName))
 		if file.MatchTag(matchTag) {
 			addStruct(fm, file, "")
@@ -145,11 +137,26 @@ func addData(fm *fileModel, matchTag string) {
 }
 
 func hashFile(filePath string) string {
+	// file, _ := os.Open(filePath)
+	// decoder := mahonia.NewDecoder("utf-8")
+	// // decoder := mahonia.NewDecoder("gb2312")
+	// defer file.Close()
+	// hash := sha256.New()
+	// io.Copy(hash, decoder.NewReader(file))
+	// return fmt.Sprintf("%x", hash.Sum(nil))
+
+	// fi, _ := os.Open(filePath)
+	// decoder := mahonia.NewDecoder("gbk")
+	// decoder := mahonia.NewDecoder("utf-8")
+	// data, _ := ioutil.ReadFile(filePath)
+	// // data, _ := ioutil.ReadAll(decoder.NewReader(fi))
+	// // fi.Close()
+	// s := strings.ReplaceAll(strings.ReplaceAll(string(data), "\n", ""), "\\0", "")
+	// return fmt.Sprintf("%x", md5.Sum([]byte(s)))
+
 	file, _ := os.Open(filePath)
-	decoder := mahonia.NewDecoder("utf-8")
-	// decoder := mahonia.NewDecoder("gb2312")
 	defer file.Close()
-	hash := sha256.New()
-	io.Copy(hash, decoder.NewReader(file))
-	return fmt.Sprintf("%x", hash.Sum(nil))
+	hash := md5.New()
+	io.Copy(hash, file)
+	return hex.EncodeToString(hash.Sum(nil))
 }
