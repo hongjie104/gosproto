@@ -4,9 +4,11 @@ import (
 	"crypto/md5"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"sort"
 	"strings"
 
+	"github.com/axgle/mahonia"
 	"github.com/davyxu/gosproto/meta"
 )
 
@@ -123,7 +125,12 @@ func addStruct(fm *fileModel, fileD *meta.FileDescriptor, srcName string) {
 func addData(fm *fileModel, matchTag string) {
 	var md5StrList []string
 	for _, file := range fm.FileDescriptorSet.Files {
-		data, _ := ioutil.ReadFile(file.FileName)
+		fi, _ := os.Open(file.FileName)
+		// decoder := mahonia.NewDecoder("gbk")
+		decoder := mahonia.NewDecoder("utf-8")
+		// data, _ := ioutil.ReadFile(file.FileName)
+		data, _ := ioutil.ReadAll(decoder.NewReader(fi))
+		fi.Close()
 		md5StrList = append(md5StrList, fmt.Sprintf("%x", md5.Sum(data)))
 		if file.MatchTag(matchTag) {
 			addStruct(fm, file, "")
@@ -135,11 +142,11 @@ func addData(fm *fileModel, matchTag string) {
 	fm.MD5 = fmt.Sprintf("%x", md5.Sum([]byte(strings.Join(md5StrList, ""))))
 }
 
-func md5SumFile(file string) (value string, err error) {
-	data, err := ioutil.ReadFile(file)
-	if err != nil {
-		return
-	}
-	value = fmt.Sprintf("%x", md5.Sum(data))
-	return
-}
+// func md5SumFile(file string) (value string, err error) {
+// 	data, err := ioutil.ReadFile(file)
+// 	if err != nil {
+// 		return
+// 	}
+// 	value = fmt.Sprintf("%x", md5.Sum(data))
+// 	return
+// }
