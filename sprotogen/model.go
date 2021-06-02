@@ -2,9 +2,8 @@ package main
 
 import (
 	"crypto/md5"
-	"encoding/hex"
-	"io"
-	"os"
+	"fmt"
+	"io/ioutil"
 	"sort"
 	"strings"
 
@@ -132,8 +131,8 @@ func addData(fm *fileModel, matchTag string) {
 	sort.Slice(md5StrList, func(i, j int) bool {
 		return md5StrList[i] < md5StrList[j]
 	})
-	// fm.MD5 = fmt.Sprintf("%x", md5.Sum([]byte(strings.Join(md5StrList, ""))))
-	fm.MD5 = strings.Join(md5StrList, "&")
+	fm.MD5 = fmt.Sprintf("%x", md5.Sum([]byte(strings.Join(md5StrList, ""))))
+	// fm.MD5 = strings.Join(md5StrList, "&")
 }
 
 func hashFile(filePath string) string {
@@ -154,9 +153,48 @@ func hashFile(filePath string) string {
 	// s := strings.ReplaceAll(strings.ReplaceAll(string(data), "\n", ""), "\\0", "")
 	// return fmt.Sprintf("%x", md5.Sum([]byte(s)))
 
-	file, _ := os.Open(filePath)
-	defer file.Close()
-	hash := md5.New()
-	io.Copy(hash, file)
-	return hex.EncodeToString(hash.Sum(nil))
+	// file, _ := os.Open(filePath)
+	// defer file.Close()
+	// hash := md5.New()
+	// io.Copy(hash, file)
+	// return hex.EncodeToString(hash.Sum(nil))
+
+	// 	s := `// 玩家成就
+	// message RoleAchievement {
+	// 	id string
+	// 	type string
+	// 	// 成就的值，比如是理发次数要达到100次的成就，value就是当前理发的次数
+	// 	value int32
+	// 	// 上一次领取过的奖励id，如果没有领取过奖励，那么该值为空
+	// 	receivedAwardID string
+	// }
+
+	// // 获取成就数据
+	// message C2S_GetAchievement {}
+
+	// message S2C_GetAchievement {
+	// 	list []RoleAchievement
+	// }
+
+	// // 领取成就的奖励
+	// message C2S_ReceiveAchievementAward {
+	// 	id string
+	// }
+
+	// message S2C_UpdateAchievement {
+	// 	data RoleAchievement
+	// }`
+
+	// return fmt.Sprintf("%x", md5.Sum([]byte(s)))
+
+	// fi, _ := os.Open(filePath)
+	// decoder := mahonia.NewDecoder("gbk")
+	// decoder := mahonia.NewDecoder("utf-8")
+	data, _ := ioutil.ReadFile(filePath)
+	// data, _ := ioutil.ReadAll(decoder.NewReader(fi))
+	// fi.Close()
+	s := strings.ReplaceAll(strings.ReplaceAll(string(data), "\n", ""), "\\0", "")
+	s = strings.ReplaceAll(s, " ", "")
+	// return fmt.Sprintf("%x", md5.Sum([]byte(s)))
+	return s
 }
